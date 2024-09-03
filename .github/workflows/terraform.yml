@@ -1,0 +1,49 @@
+name: Terraform Workflow
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set Up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.9.5
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -out=tfplan
+
+      - name: Upload Terraform Plan
+        uses: actions/upload-artifact@v3
+        with:
+          name: tfplan
+          path: tfplan
+
+      - name: Check Terraform Plan Success
+        id: check
+        run: |
+          terraform show -no-color tfplan | grep "No changes. Infrastructure is up-to-date."
+        continue-on-error: true
+
+      - name: Merge Branch to Main
+        if: steps.check.outcome == 'success'
+        uses: peter-evans/merge-action@v4
+        with:
+          source_branch: ${{ github.head_ref }}
+          target_branch: main
+          commit_message: "Automated merge of branch ${{ github.head_ref }} to main"
+
+      - name: Notify on Failure
+        if: steps.check.outcome != 'success'
+        run: echo "Terraform plan did not succeed. No changes have been merged."
