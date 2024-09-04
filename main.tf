@@ -19,3 +19,14 @@ resource "aws_instance" "newinsta123nce" {
     instance_type = "t2.micro"
   
 }
+resource "aws_instance" "newinsta" {
+    ami = "ami-04e49d62cf88738f1"
+    instance_type = "t2.micro"
+  
+}
+resource "aws_instance" "yowinsta" {
+    ami = "ami-04e49d62cf88738f1"
+    instance_type = "t2.micro"
+  
+}
+
