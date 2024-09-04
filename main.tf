@@ -10,6 +10,3 @@ resource "aws_instance" "newinta" {
   
 }
 
-output "bucket_name" {
-  value = aws_s3_bucket.t1ff_state.bucket
-}
