@@ -9,4 +9,3 @@ resource "aws_instance" "newinta" {
     instance_type = "t2.micro"
   
 }
-
